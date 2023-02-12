@@ -14,7 +14,7 @@
    <string>Распознавание людей</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="videoLoadBtn">
+   <widget class="QPushButton" name="video_load_btn">
     <property name="geometry">
      <rect>
       <x>50</x>
@@ -358,7 +358,7 @@
      <string>Выберите номер остановочного пункта</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="comboBox">
+   <widget class="QComboBox" name="stops_combo_box">
     <property name="geometry">
      <rect>
       <x>180</x>
