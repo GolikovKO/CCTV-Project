@@ -14,7 +14,7 @@
    <string>Распознавание людей</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="videoLoadBtn">
+   <widget class="QPushButton" name="video_load_btn">
     <property name="geometry">
      <rect>
       <x>50</x>

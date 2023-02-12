@@ -1,11 +1,6 @@
 from os import environ
+environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
-# from DataMatching import DataMatching
-# from BuildGraph import BuildGraph
-# from DbService import DbService
-from BoxesCoords import BoxesCoords
-from StopCheck import StopCheck
-from StopCoords import StopCoords
 from imageai.Detection import VideoObjectDetection
 from pynput import mouse
 from PyQt5 import uic
@@ -14,12 +9,18 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtGui import QPixmap
 from PyQt5 import QtGui
-
-environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = QLibraryInfo.location(
     QLibraryInfo.PluginsPath
 )
-# import numpy
+
+# from DataMatching import DataMatching
+# from BuildGraph import BuildGraph
+# from DbService import DbService
+from BoxesCoords import BoxesCoords
+from StopCheck import StopCheck
+from StopCoords import StopCoords
+
+import numpy
 import math
 import os
 import pygame
@@ -200,8 +201,7 @@ class MainWindow(QMainWindow):
         uic.loadUi('./interface/interface.ui', self)
 
         self.comboBox.addItems(['1', '2', '3', '4', '5'])
-
-        self.videoLoadBtn.clicked.connect(self.evt_videoLoadBtn_clicked)
+        self.video_load_btn.clicked.connect(self.evt_videoLoadBtn_clicked)
 
     def evt_videoLoadBtn_clicked(self):
 
@@ -211,8 +211,7 @@ class MainWindow(QMainWindow):
         stop_id = int(self.comboBox.currentText())
         self.comboBox.setEnabled(False)
 
-        videoPath = QtWidgets.QFileDialog.getOpenFileName(None, 'Выберите видео')[
-            0]  # вызов проводника для выбора видео
+        videoPath = QtWidgets.QFileDialog.getOpenFileName(None, 'Выберите видео')[0]  # вызов проводника для выбора видео
 
         vidcap = cv2.VideoCapture(videoPath)
         success, image = vidcap.read()  # считываем первый кадр видео, чтобы указать границу остановки
@@ -358,9 +357,14 @@ class MainWindow(QMainWindow):
         self.label_frame_number.setText(str(frame_number))
 
 
-app = QApplication(sys.argv)
+def main():
+    app = QApplication(sys.argv)
 
-window = MainWindow()
-window.show()
+    window = MainWindow()
+    window.show()
 
-app.exec_()
+    app.exec_()
+
+
+if __name__ == '__main__':
+    main()
