@@ -3,7 +3,7 @@ from os import environ
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
 from imageai.Detection import VideoObjectDetection
-from pynput import mouse
+from pynput.mouse import Controller
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5 import QtWidgets
@@ -229,19 +229,22 @@ class MainWindow(QMainWindow):
 
         stopCoords = []  # промежуточный список для координат остановки
 
-        def on_click(x, y, button, pressed):  # добавление координат остановки
+        mouse = Controller()
+
+        for i in range(4):
+            print(mouse.position)
+        """def on_click(x, y, button, pressed):  # добавление координат остановки
 
             if pressed == True:
                 stopCoords.append(x)  # само добавление
                 stopCoords.append(y)
 
             if not pressed:
-                return False  # to stop Listener
+                return False  # to stop Listener"""
 
-        for i in range(4):  # границы остановки определяются четырьмя точками, поэтому цикл на 4
-            with mouse.Listener(
-                    on_click=on_click) as listener:
-                listener.join()
+        """for i in range(4):  # границы остановки определяются четырьмя точками, поэтому цикл на 4
+            with mouse.Listener(on_click=self.on_click) as listener:
+                listener.join()"""
 
         stopCoord.setX1(stopCoords[0])  # верхний левый x # запись координат остановки в класс
         stopCoord.setY1(stopCoords[1])  # y
