@@ -3,7 +3,7 @@ from os import environ
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
 from imageai.Detection import VideoObjectDetection
-from pynput.mouse import Controller
+from pynput import *
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5 import QtWidgets
@@ -211,6 +211,17 @@ class MainWindow(QMainWindow):
         global video_path
         global stop_id
 
+        stopCoords = []  # Список координат остановки
+
+        def on_click(x, y, button, pressed):  # добавление координат остановки
+
+            if pressed:
+                stopCoords.append(x)  # само добавление
+                stopCoords.append(y)
+
+            if not pressed:
+                return False  # to stop Listener
+
         stop_id = int(self.stops_combo_box.currentText())  # Получаем номер выбранной остановки из комбо-бокса
         self.stops_combo_box.setEnabled(False)  # Выключаем комбо-бокс с номерами остановки после выбора видеозаписи
 
@@ -224,27 +235,12 @@ class MainWindow(QMainWindow):
         pygame.display.init()  # Инициализируем доступ к дисплею монитора
         img = pygame.image.load(first_frame_path)  # Загружаем путь сохранённого первого кадра видео
         screen = pygame.display.set_mode(img.get_size(), pygame.FULLSCREEN)  # Настраиваем отображение первого кадра видео для правильной ориентации координат
-        screen.blit(img, (0, 0))  # Помещаем первый кадр видео на screen с координатами верхнего левого угла
-        pygame.display.flip()  # Обновляем содержимое дисплея настроенным screen
+        screen.blit(img, (0, 0))  # Помещаем первый кадр видео на дисплей монитора с координатами верхнего левого угла
+        pygame.display.flip()  # Обновляем дисплей монитора
 
-        stopCoords = []  # промежуточный список для координат остановки
-
-        mouse = Controller()
-
-        for i in range(4):
-            print(mouse.position)
-        """def on_click(x, y, button, pressed):  # добавление координат остановки
-
-            if pressed == True:
-                stopCoords.append(x)  # само добавление
-                stopCoords.append(y)
-
-            if not pressed:
-                return False  # to stop Listener"""
-
-        """for i in range(4):  # границы остановки определяются четырьмя точками, поэтому цикл на 4
-            with mouse.Listener(on_click=self.on_click) as listener:
-                listener.join()"""
+        for i in range(4):  # Нужно получить границы остановки нажатием мыши, ставим слушатель на нажатие мышии добавляем координаты в список
+            with mouse.Listener(on_click=on_click) as listener:
+                listener.join()
 
         stopCoord.setX1(stopCoords[0])  # верхний левый x # запись координат остановки в класс
         stopCoord.setY1(stopCoords[1])  # y
@@ -259,18 +255,20 @@ class MainWindow(QMainWindow):
                           [(stopCoord.getX1(), stopCoord.getY1()), (stopCoord.getX2(), stopCoord.getY2()),
                            (stopCoord.getX3(), stopCoord.getY3()), (stopCoord.getX4(), stopCoord.getY4())],
                           10)  # отрисовываем на картинке границы, нажатые мышкой
-        pygame.display.flip()
-        pygame.image.save(screen,
-                          './source/video_data/stop_area_frame/stop_area.png')  # сохраняем эту картинку с границами
-        pygame.display.quit()
-        pygame.quit()  # закрываем отображение картинки на весь экран
+        pygame.display.flip()  # Обновляем дисплей монитора
 
-        img = cv2.imread('./source/video_data/stop_area_frame/stop_area.png')  # обрезаем чёрные зоны по бокам
-        cropped_image = img[0:1040, 652:1265]
-        cv2.imwrite('./source/video_data/stop_area_frame/stop_area.png', cropped_image)
+        stop_image_path = './source/video_data/stop_area_frame/stop_area.png'
 
-        pixmap = QPixmap('./source/video_data/stop_area_frame/stop_area.png')
-        self.label_stop_area.setPixmap(pixmap)
+        pygame.image.save(screen, stop_image_path)  # Сохраняем картинку с границами
+        pygame.display.quit()  # Выключаем доступ к дисплею монитора
+        pygame.quit()  # Убираем картинку со всего экрана
+
+        img = cv2.imread(stop_image_path)  # Загружаем путь к картинке остановки с границами
+        cropped_image = img[0:1040, 652:1265]  # Обрезка чёрных зон по бокам для отображения в интерфейсе
+        cv2.imwrite(stop_image_path, cropped_image)  # Пересохраняем картинку уже без чёрных зон
+
+        pixmap = QPixmap(stop_image_path)  #  Загружаем путь картинки для label'a в интерфейсе
+        self.label_stop_area.setPixmap(pixmap)  # Устанавливаем эту картинку
 
         self.worker = WorkerThread()
         self.worker.start()
