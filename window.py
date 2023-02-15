@@ -21,7 +21,7 @@ environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = QLibraryInfo.location(
 from BoxesCoords import BoxesCoords
 from StopCheck import StopCheck
 from StopCoords import StopCoords
-
+from worker_thread import WorkerThread
 import numpy
 import math
 import os
@@ -36,11 +36,11 @@ people_inside_total = 0
 people_getoff_total = 0
 people_getin_total = 0
 stopCoord = StopCoords()
-video_path = ''
+#video_path = ''
 stop_id = 0
 
 
-class WorkerThread(QThread):
+"""class WorkerThread(QThread):
     update_frame_number = pyqtSignal(int)
     update_time = pyqtSignal(int)
     update_getin_amount = pyqtSignal(int)
@@ -184,7 +184,7 @@ class WorkerThread(QThread):
             log_progress=True,
             per_frame_function=forFrame,
             return_detected_frame=True
-        )
+        )"""
 
 
 label_in1_img = False
@@ -208,7 +208,7 @@ class MainWindow(QMainWindow):
 
     def evt_video_load_btn_clicked(self):
 
-        global video_path
+        #global video_path
         global stop_id
 
         stopCoords = []  # Список координат остановки
