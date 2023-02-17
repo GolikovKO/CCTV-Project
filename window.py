@@ -18,7 +18,7 @@ environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = QLibraryInfo.location(
 # from DataMatching import DataMatching
 # from BuildGraph import BuildGraph
 # from DbService import DbService
-from BoxesCoords import BoxesCoords
+from boxes_coords import BoxesCoords
 from StopCheck import StopCheck
 from StopCoords import StopCoords
 from worker_thread import WorkerThread
@@ -225,7 +225,7 @@ class MainWindow(QMainWindow):
         stop_id = int(self.stops_combo_box.currentText())  # Получаем номер выбранной остановки из комбо-бокса
         self.stops_combo_box.setEnabled(False)  # Выключаем комбо-бокс с номерами остановки после выбора видеозаписи
 
-        video_path, _filters = QtWidgets.QFileDialog.getOpenFileName(None, 'Выберите видео')  # Вызов проводника для выбора видео
+        video_path, _filters = QtWidgets.QFileDialog.getOpenFileName(None, 'Выберите видео')  # Вызов проводника для выбора видео TODO: Video path not working in other thread
         video_capture = cv2.VideoCapture(video_path)  # Передаём путь к видео к библиотеке cv2 для вырезки первого кадра
         success, image = video_capture.read()  # Считываем первый кадр видео
 
@@ -257,7 +257,7 @@ class MainWindow(QMainWindow):
                           10)  # отрисовываем на картинке границы, нажатые мышкой
         pygame.display.flip()  # Обновляем дисплей монитора
 
-        stop_image_path = './source/video_data/stop_area_frame/stop_area.png'
+        stop_image_path = './source/video_data/stop_area_frame/stop_area.png'  # Путь для сохранения кадра с остановкой
 
         pygame.image.save(screen, stop_image_path)  # Сохраняем картинку с границами
         pygame.display.quit()  # Выключаем доступ к дисплею монитора
@@ -270,8 +270,11 @@ class MainWindow(QMainWindow):
         pixmap = QPixmap(stop_image_path)  #  Загружаем путь картинки для label'a в интерфейсе
         self.label_stop_area.setPixmap(pixmap)  # Устанавливаем эту картинку
 
-        self.worker = WorkerThread()
-        self.worker.start()
+        # Необходим второй поток для вычислений, чтобы интерфейс не зависал. Создаём его
+        self.worker = WorkerThread()  # Инициализируем поток по конкретному классу
+        self.worker.start()  # Запускаем поток
+
+        # Подключаем к потоку сигналы, то есть настройка события, при котором нужно вернуть значение в основной поток и обновить интерфейс
         self.worker.update_frame_number.connect(self.evt_update_frame_number)
         self.worker.update_time.connect(self.evt_update_time)
         self.worker.update_getin_amount.connect(self.evt_update_people_getin_amount)

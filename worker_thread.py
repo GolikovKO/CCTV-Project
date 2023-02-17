@@ -3,8 +3,20 @@ import math
 
 from PyQt5.QtCore import QThread, pyqtSignal
 from imageai.Detection import VideoObjectDetection
-from BoxesCoords import BoxesCoords
+
+from StopCoords import StopCoords
+from boxes_coords import BoxesCoords
 from StopCheck import StopCheck
+
+center_points_prev_frame = []
+tracking_people = {}
+people_id = 0
+people_inside_total = 0
+people_getoff_total = 0
+people_getin_total = 0
+stopCoord = StopCoords()
+# video_path = ''
+stop_id = 0
 
 
 class WorkerThread(QThread):
@@ -21,9 +33,10 @@ class WorkerThread(QThread):
 
         def for_frame(frame_number, output_array, output_count, returned_frame):
 
+            people_boxes_array = output_array
+
             self.update_frame_number.emit(frame_number)
 
-            coord_id = 0
             center_points_cur_frame = []
 
             global people_id
@@ -33,25 +46,23 @@ class WorkerThread(QThread):
             global people_inside_total
             global tracking_people
             global stopCoord
-            global video_path
+            # global video_path
             global stop_id
 
-            boxes = BoxesCoords()
+            #boxes = BoxesCoords()
 
-            x, y = len(
-                output_array), 8  # создаём двумерный список, в котором количество элементов зависит от количества обнаруженных людей,
+            x, y = len(people_boxes_array), 8  # Cоздаём двумерный список, в котором количество элементов зависит от количества обнаруженных людей на этом кадре,
             # и у каждого человека 8 координат - края ограничивающего прямоугольника
-            boxesCoords = [[0 for j in range(y)] for i in range(x)]
+            boxes_coords = [[0 for j in range(y)] for i in range(x)]
 
-            for eachObject in output_array:
-                x1, y1, x4, y4 = eachObject[
-                    "box_points"]  # для каждого найденного человека imageai даёт только четыре координаты
-                cx = int((x1 + x4) / 2)
-                cy = int((y1 + y4) / 2)
-                center_points_cur_frame.append((cx, cy))  # центры каждого прямоугольника
-                boxesCoords = boxes.loadBoxesCoords(x1, y1, x4, y4, coord_id,
-                                                    boxesCoords)  # отправляем их в функцию чтобы найти остальные координаты
-                coord_id += 1  # счётчик людей
+            humans_counter = 0
+            for people_box in people_boxes_array:  # В массиве из ограничивающих прямоугольников
+                x1, y1, x4, y4 = people_box["box_points"]  # Для каждого найденного человека imageai даёт только четыре координаты: левый верхний угол и правый нижний
+                central_box_point_x = int((x1 + x4) / 2)  # Ищем центральный х каждого прямоугольника
+                central_box_point_y = int((y1 + y4) / 2)  # Ищем центральный y каждого прямоугольника
+                center_points_cur_frame.append((central_box_point_x, central_box_point_y))  # Добавляем в список центры каждого прямоугольника
+                boxes_coords = BoxesCoords.load_boxes_coords(self, x1, y1, x4, y4, people_box, boxes_coords)  # Отправляем координаты в функцию чтобы найти остальные координаты
+                humans_counter += 1  # Считаем каждый прямоугольник как найденного человека
 
             if frame_number <= 2:
                 for cur_points in center_points_cur_frame:
@@ -105,14 +116,14 @@ class WorkerThread(QThread):
                     tracking_people[people_id] = pt
                     people_id += 1
 
-            center_points_prev_frame = center_points_cur_frame.copy()
+            center_points_prev_frame = center_points_cur_frame.copy()  # Копируем центральные точки текущего кадра в массив точек прошлого кадра
 
-            if frame_number % 30 == 0:
+            if frame_number % 30 == 0:  # Каждый 30 кадр делаем следующие действия, то есть, каждую секунду
                 time = int(float(frame_number / 30))
 
                 self.update_time.emit(time)
 
-                people_at_sec = boxes.locatingInsideStop(stop_id, time, boxesCoords, stopCoord)
+                people_at_sec = BoxesCoords.locatingInsideStop(stop_id, time, boxes_coords, stopCoord)
                 print('people inside stop count - ', people_at_sec)
 
                 people_inside_total += people_at_sec
@@ -128,23 +139,24 @@ class WorkerThread(QThread):
             print("people count leave bus stop - ", people_getoff_total)
             print("people count in bus stop - ", people_getin_total)
 
-        execution_path = os.getcwd()
+        #  Настройка сети
+        execution_path = os.getcwd()  # Записываем путь к папке проекта
 
-        resnet_path = execution_path + './resnet'
-        output_path = execution_path + './detected_video'
+        resnet_path = execution_path + '/resnet'  # Указываем путь к весам сети в папке проекта
+        output_path = execution_path + '/detected_video'  # Указываем путь для обработанного видео в папке проекта
 
-        detector = VideoObjectDetection()
-        detector.setModelTypeAsRetinaNet()
-        detector.setModelPath(os.path.join(resnet_path, "resnet.pth"))
+        detector = VideoObjectDetection()  # Создаём экземпляр класса поиска предметов на видео
+        detector.setModelTypeAsRetinaNet()  # Настраиваем класс на определённый вид модели
+        detector.setModelPath(os.path.join(resnet_path, 'resnet.pth'))  # Веса для этого вида модели
 
-        detector.loadModel()
+        detector.loadModel()  # Загружаем тип сети и веса, под капотом какие-то алгоритмы для взаимодействия
 
-        custom = detector.CustomObjects(person=True)
+        custom = detector.CustomObjects(person=True)  # Указываем что нужно искать только людей
 
-        video = detector.detectObjectsFromVideo(
+        video = detector.detectObjectsFromVideo(  # Остальные настройки поиска, типа кадров в секунду, выводить логи в консоль и т.д.
             custom_objects=custom,
-            input_file_path=os.path.join(video_path),
-            output_file_path=os.path.join(output_path, "detected"),
+            input_file_path=os.path.join('/home/kostya/PycharmProjects/CCTV/video/videos/cropped.mp4'),  # video_path),
+            output_file_path=os.path.join(output_path, 'detected'),
             frames_per_second=30,
             display_box=True,
             display_percentage_probability=False,
