@@ -145,7 +145,7 @@ class WorkerThread(QThread):
         execution_path = os.getcwd()  # Записываем путь к папке проекта
 
         resnet_path = execution_path + '/resnet'  # Указываем путь к весам сети в папке проекта
-        output_path = execution_path + '\\source\\detected_video\\'  # Указываем путь для обработанного видео в папке проекта
+        output_path = execution_path + '/source/detected_video/'  # Указываем путь для обработанного видео в папке проекта
 
         detector = VideoObjectDetection()  # Создаём экземпляр класса поиска предметов на видео
         detector.setModelTypeAsRetinaNet()  # Настраиваем класс на определённый вид модели
@@ -159,7 +159,6 @@ class WorkerThread(QThread):
             custom_objects=custom,
             input_file_path=os.path.join('D:/Dev/PyCharmProjects/CCTV-Project/source/video/cropped.mp4'), #('/home/kostya/PycharmProjects/CCTV/video/videos/cropped.mp4'),  # video_path),
             output_file_path=os.path.join(output_path, 'video'),
-            #save_detected_video=False,
             frames_per_second=30,
             display_box=True,
             display_percentage_probability=False,
