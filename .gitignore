@@ -197,6 +197,7 @@ dmypy.json
 
 # Videos
 *.mp4
+*.avi
 
 # Network weights
 *.h5
