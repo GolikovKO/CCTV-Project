@@ -6,7 +6,7 @@ from imageai.Detection import VideoObjectDetection
 
 from StopCoords import StopCoords
 from boxes_coords import locating_inside_stop, load_boxes_coords
-from StopCheck import StopCheck
+from human_stop_status_check import check_human_postition
 
 center_box_points_previous_frame = []
 tracked_humans = {}
@@ -97,18 +97,17 @@ class WorkerThread(QThread):
                             # Когда определили,что это тот же самый человек, можно проверить вышел он с остановки или вошёл, или остался на том же месте
 
                             # Отправляем всё необходимое для определения в функцию
-                            stopCheck = StopCheck()
-                            amount = stopCheck.peopleAmount(current_points, stopCoord, tracking_human_copy, human_id,
-                                                            returned_frame, stop_id, frame_number, people_getin_total,
-                                                            people_getoff_total)
-                            if amount == 2:
+                            params = check_human_postition(current_points, stopCoord, tracking_human_copy, human_id,
+                                                           returned_frame, stop_id, frame_number, people_getin_total,
+                                                           people_getoff_total)
+                            if params == 2:
                                 pass
-                            elif amount[1] == 0:
-                                people_getin_total += amount[0]
-                                self.update_getin_labels.emit(amount[2], amount[3])
-                            elif amount[1] == 1:
-                                people_getoff_total += amount[0]
-                                self.update_getoff_labels.emit(amount[2], amount[3])
+                            elif params[1] == 0:
+                                people_getin_total += params[0]
+                                self.update_getin_labels.emit(params[2], params[3])
+                            elif params[1] == 1:
+                                people_getoff_total += params[0]
+                                self.update_getoff_labels.emit(params[2], params[3])
                             if current_points in center_box_points_current_frame:  # Удаляем этого же самого человека из списка точек текущего кадра
                                 center_box_points_current_frame.remove(current_points)
                             #continue

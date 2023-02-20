@@ -19,7 +19,7 @@ environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = QLibraryInfo.location(
 # from BuildGraph import BuildGraph
 # from DbService import DbService
 #from boxes_coords import BoxesCoords
-from StopCheck import StopCheck
+from human_stop_status_check import StopCheck
 from StopCoords import StopCoords
 from worker_thread import WorkerThread
 import numpy
