@@ -3,8 +3,8 @@ from save_cropped_human_image import save_people_get_in_image, save_people_get_o
 from StopCoords import StopCoords
 
 
-def check_human_postition(current_points, stop_coord, tracking_people, human_id, returned_frame, stop_id, frame_number,
-                          humans_get_in_total_count, humans_get_off_total_count):
+def check_human_position(current_points, tracking_people, human_id, returned_frame, stop_id, frame_number,
+                         humans_get_in_total_count, humans_get_off_total_count):
 
     stop_сoord = StopCoords()
     humans_count = 0
