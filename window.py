@@ -19,7 +19,7 @@ environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = QLibraryInfo.location(
 # from BuildGraph import BuildGraph
 # from DbService import DbService
 #from boxes_coords import BoxesCoords
-from human_stop_status_check import StopCheck
+#from human_stop_status_check import StopCheck
 from StopCoords import StopCoords
 from worker_thread import WorkerThread
 import numpy
@@ -91,8 +91,7 @@ class MainWindow(QMainWindow):
         screen.blit(img, (0, 0))  # Помещаем первый кадр видео на дисплей монитора с координатами верхнего левого угла
         pygame.display.flip()  # Обновляем дисплей монитора
 
-        for i in range(
-                4):  # Нужно получить границы остановки нажатием мыши, ставим слушатель на нажатие мышии добавляем координаты в список
+        for i in range(4):  # Нужно получить границы остановки нажатием мыши, ставим слушатель на нажатие мышии добавляем координаты в список
             with mouse.Listener(on_click=on_click) as listener:
                 listener.join()
 

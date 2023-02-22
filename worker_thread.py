@@ -124,7 +124,7 @@ class WorkerThread(QThread):
                 self.update_time.emit(time)
 
                 humans_in_second_count = locating_inside_stop(stop_id, time, boxes_coords, stopCoord)
-                print('people inside stop count - ', humans_in_second_count)
+                print('Number of humans at the stop - ', humans_in_second_count)
 
                 humans_inside_total_count += humans_in_second_count
 
@@ -136,8 +136,8 @@ class WorkerThread(QThread):
             self.update_getin_amount.emit(humans_get_in_total_count)
             self.update_getoff_amount.emit(humans_get_off_total_count)
 
-            print("people count leave bus stop - ", humans_get_off_total_count)
-            print("people count in bus stop - ", humans_get_in_total_count)
+            print("Number of humans leave bus stop - ", humans_get_off_total_count)
+            print("Number of humans came to the bus stop - ", humans_get_in_total_count)
 
         #  Настройка сети
         execution_path = os.getcwd()  # Записываем путь к папке проекта
