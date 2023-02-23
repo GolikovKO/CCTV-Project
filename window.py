@@ -2,7 +2,7 @@ from os import environ
 
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
-from imageai.Detection import VideoObjectDetection
+#from imageai.Detection import VideoObjectDetection
 from pynput import *
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QMainWindow

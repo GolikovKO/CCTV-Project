@@ -5,7 +5,7 @@ from mysql.connector.errors import Error
 
 def getPodezd():
     dbConnection = DatabaseConnectionSettings()
-    dbConnection.setDbSettings()
+    dbConnection.set_db_settings()
 
     dbHost = dbConnection.getDbHost()
     dbUser = dbConnection.getDbUser()
@@ -15,12 +15,7 @@ def getPodezd():
     result = ''
 
     try:
-        with connect(
-                host=dbHost,
-                user=dbUser,
-                password=dbPass,
-                database=dbName
-        ) as connection:
+        with connect(host=dbHost, user=dbUser, password=dbPass, database=dbName) as connection:
             sql = "SELECT * FROM podezd JOIN svyaz ON svyaz.svyaz_id = podezd.svyaz_id WHERE svyaz.stop_id = 2"
             with connection.cursor() as cursor:
                 cursor.execute(sql)
@@ -35,7 +30,7 @@ def getPodezd():
 
 def getTimeAndPeople():
     dbConnection = DatabaseConnectionSettings()
-    dbConnection.setDbSettings()
+    dbConnection.set_db_settings()
 
     dbHost = dbConnection.getDbHost()
     dbUser = dbConnection.getDbUser()
@@ -45,13 +40,9 @@ def getTimeAndPeople():
     result = ''
 
     try:
-        with connect(
-                host=dbHost,
-                user=dbUser,
-                password=dbPass,
-                database=dbName
-        ) as connection:
-            sql = "SELECT `time`, COUNT(`time`) AS `count` FROM `people` WHERE flag = 0 GROUP BY `time` HAVING `count` >= 1"
+        with connect(host=dbHost, user=dbUser, password=dbPass, database=dbName) as connection:
+            sql = "SELECT `time`, COUNT(`time`) AS `count` FROM `people` WHERE flag = 0 GROUP BY `time` " \
+                  "HAVING `count` >= 1"
             with connection.cursor() as cursor:
                 cursor.execute(sql)
                 result = cursor.fetchall()
@@ -65,7 +56,7 @@ def getTimeAndPeople():
 
 def load_human_coords(stop_id, time, x1, y1, x4, y4):
     dbConnection = DatabaseConnectionSettings()
-    dbConnection.setDbSettings()
+    dbConnection.set_db_settings()
 
     dbHost = dbConnection.getDbHost()
     dbUser = dbConnection.getDbUser()
@@ -73,12 +64,7 @@ def load_human_coords(stop_id, time, x1, y1, x4, y4):
     dbName = dbConnection.getDbName()
 
     try:
-        with connect(
-                host=dbHost,
-                user=dbUser,
-                password=dbPass,
-                database=dbName
-        ) as connection:
+        with connect(host=dbHost, user=dbUser, password=dbPass, database=dbName) as connection:
             sql = "INSERT INTO people (stop_id, coord_x1, coord_y1, coord_x4, coord_y4, time, flag) VALUES (" + str(
                 stop_id) + "," + str(x1) + "," + str(y1) + "," + str(x4) + "," + str(y4) + "," + "'" + str(
                 time) + "'" + "," + str(0) + ")"
@@ -92,7 +78,7 @@ def load_human_coords(stop_id, time, x1, y1, x4, y4):
 
 def load_humans_count_go_outside(stop_id, time, x1, y1, x4, y4, humans_get_off_total_count):
     dbConnection = DatabaseConnectionSettings()
-    dbConnection.setDbSettings()
+    dbConnection.set_db_settings()
 
     db_host = dbConnection.getDbHost()
     db_user = dbConnection.getDbUser()
@@ -114,7 +100,7 @@ def load_humans_count_go_outside(stop_id, time, x1, y1, x4, y4, humans_get_off_t
 
 def load_humans_count_go_inside(stop_id, time, x1, y1, x4, y4, humans_get_in_total_count):
     dbConnection = DatabaseConnectionSettings()
-    dbConnection.setDbSettings()
+    dbConnection.set_db_settings()
 
     db_host = dbConnection.getDbHost()
     db_user = dbConnection.getDbUser()
