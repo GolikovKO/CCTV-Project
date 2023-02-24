@@ -6,7 +6,7 @@ def get_db_settings():
     return settings
 
 
-def set_db_settings():
+def create_db_connection():
     settings = get_db_settings()
 
     db_name = settings[0]
