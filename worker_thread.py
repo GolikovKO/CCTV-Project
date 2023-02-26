@@ -6,14 +6,14 @@ from imageai.Detection import VideoObjectDetection
 
 from StopCoords import StopCoords
 from boxes_coords import locating_inside_stop, load_boxes_coords
-from StopCheck import StopCheck
+from human_stop_status_check import check_human_position
 
 center_box_points_previous_frame = []
 tracked_humans = {}
 human_count = 0
-people_inside_total = 0
-people_getoff_total = 0
-people_getin_total = 0
+humans_inside_total_count = 0
+humans_get_off_total_count = 0
+humans_get_in_total_count = 0
 stopCoord = StopCoords()
 # video_path = ''
 stop_id = 0
@@ -41,9 +41,9 @@ class WorkerThread(QThread):
 
             global human_count
             global center_box_points_previous_frame
-            global people_getoff_total
-            global people_getin_total
-            global people_inside_total
+            global humans_get_off_total_count
+            global humans_get_in_total_count
+            global humans_inside_total_count
             global tracked_humans
             global stopCoord
             # global video_path
@@ -97,21 +97,19 @@ class WorkerThread(QThread):
                             # Когда определили,что это тот же самый человек, можно проверить вышел он с остановки или вошёл, или остался на том же месте
 
                             # Отправляем всё необходимое для определения в функцию
-                            stopCheck = StopCheck()
-                            amount = stopCheck.peopleAmount(current_points, stopCoord, tracking_human_copy, human_id,
-                                                            returned_frame, stop_id, frame_number, people_getin_total,
-                                                            people_getoff_total)
-                            if amount == 2:
+                            params = check_human_position(current_points, tracking_human_copy, human_id,
+                                                          returned_frame, stop_id, frame_number,
+                                                          humans_get_in_total_count, humans_get_off_total_count)
+                            if params == 2:
                                 pass
-                            elif amount[1] == 0:
-                                people_getin_total += amount[0]
-                                self.update_getin_labels.emit(amount[2], amount[3])
-                            elif amount[1] == 1:
-                                people_getoff_total += amount[0]
-                                self.update_getoff_labels.emit(amount[2], amount[3])
+                            elif params[1] == 0:
+                                humans_get_in_total_count += params[0]
+                                self.update_getin_labels.emit(params[2], params[3])
+                            elif params[1] == 1:
+                                humans_get_off_total_count += params[0]
+                                self.update_getoff_labels.emit(params[2], params[3])
                             if current_points in center_box_points_current_frame:  # Удаляем этого же самого человека из списка точек текущего кадра
                                 center_box_points_current_frame.remove(current_points)
-                            #continue
                     if not human_exists:  # Если этого человека не существует
                         tracked_humans.pop(human_id)  # то убираем его из списка
                 for pt in center_box_points_current_frame:  # Обновляем словарь на людей с этого кадра
@@ -125,21 +123,21 @@ class WorkerThread(QThread):
 
                 self.update_time.emit(time)
 
-                people_at_sec = locating_inside_stop(stop_id, time, boxes_coords, stopCoord)
-                print('people inside stop count - ', people_at_sec)
+                humans_in_second_count = locating_inside_stop(stop_id, time, boxes_coords, stopCoord)
+                print('Number of humans at the stop - ', humans_in_second_count)
 
-                people_inside_total += people_at_sec
+                humans_inside_total_count += humans_in_second_count
 
                 # graph = BuildGraph()
                 # graph.buildGraph()
 
                 #self.update_graph.emit()
 
-            self.update_getin_amount.emit(people_getin_total)
-            self.update_getoff_amount.emit(people_getoff_total)
+            self.update_getin_amount.emit(humans_get_in_total_count)
+            self.update_getoff_amount.emit(humans_get_off_total_count)
 
-            print("people count leave bus stop - ", people_getoff_total)
-            print("people count in bus stop - ", people_getin_total)
+            print("Number of humans leave bus stop - ", humans_get_off_total_count)
+            print("Number of humans came to the bus stop - ", humans_get_in_total_count)
 
         #  Настройка сети
         execution_path = os.getcwd()  # Записываем путь к папке проекта

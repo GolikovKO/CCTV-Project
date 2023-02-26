@@ -2,7 +2,7 @@ from os import environ
 
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
-from imageai.Detection import VideoObjectDetection
+#from imageai.Detection import VideoObjectDetection
 from pynput import *
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QMainWindow
@@ -19,7 +19,7 @@ environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = QLibraryInfo.location(
 # from BuildGraph import BuildGraph
 # from DbService import DbService
 #from boxes_coords import BoxesCoords
-from StopCheck import StopCheck
+#from human_stop_status_check import StopCheck
 from StopCoords import StopCoords
 from worker_thread import WorkerThread
 import numpy
@@ -32,9 +32,9 @@ import sys
 center_box_points_previous_frame = []
 tracked_humans = {}
 human_count = 0
-people_inside_total = 0
-people_getoff_total = 0
-people_getin_total = 0
+humans_inside_total_count = 0
+humans_get_off_total_count = 0
+humans_get_in_total_count = 0
 stopCoord = StopCoords()
 # video_path = ''
 stop_id = 0
@@ -56,8 +56,7 @@ class MainWindow(QMainWindow):
         uic.loadUi('./interface/interface.ui', self)  # Загружаем файл с интерфейсом
         self.worker = WorkerThread()  # Инициализируем поток по конкретному классу
         self.stops_combo_box.addItems(['1', '2', '3', '4', '5'])  # Добавляем в комбо-бокс номера остановок
-        self.video_load_btn.clicked.connect(
-            self.evt_video_load_btn_clicked)  # Отслеживаем нажатие кнопки выбора видеозаписи
+        self.video_load_btn.clicked.connect(self.evt_video_load_btn_clicked)  # Отслеживаем нажатие кнопки выбора видеозаписи
 
     def evt_video_load_btn_clicked(self):
 
@@ -78,9 +77,7 @@ class MainWindow(QMainWindow):
         stop_id = int(self.stops_combo_box.currentText())  # Получаем номер выбранной остановки из комбо-бокса
         self.stops_combo_box.setEnabled(False)  # Выключаем комбо-бокс с номерами остановки после выбора видеозаписи
 
-        video_path, _filters = QtWidgets.QFileDialog.getOpenFileName(None,
-                                                                     'Выберите видео')  # Вызов проводника для выбора видео TODO: Video path not working in other thread
-        print(video_path)
+        video_path, _filters = QtWidgets.QFileDialog.getOpenFileName(None, 'Выберите видео')  # Вызов проводника для выбора видео TODO: Video path not working in other thread
         video_capture = cv2.VideoCapture(video_path)  # Передаём путь к видео к библиотеке cv2 для вырезки первого кадра
         success, image = video_capture.read()  # Считываем первый кадр видео
 
@@ -94,8 +91,7 @@ class MainWindow(QMainWindow):
         screen.blit(img, (0, 0))  # Помещаем первый кадр видео на дисплей монитора с координатами верхнего левого угла
         pygame.display.flip()  # Обновляем дисплей монитора
 
-        for i in range(
-                4):  # Нужно получить границы остановки нажатием мыши, ставим слушатель на нажатие мышии добавляем координаты в список
+        for i in range(4):  # Нужно получить границы остановки нажатием мыши, ставим слушатель на нажатие мышии добавляем координаты в список
             with mouse.Listener(on_click=on_click) as listener:
                 listener.join()
 

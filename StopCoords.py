@@ -55,4 +55,4 @@ class StopCoords():
         return StopCoords.__x4
 
     def getY4(self):
-        return StopCoords.__y4             
+        return StopCoords.__y4
