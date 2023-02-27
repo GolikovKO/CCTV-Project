@@ -3,7 +3,7 @@ import psycopg2
 from db_connection_settings import DatabaseConnectionSettings, create_db_connection
 
 
-def getPodezd():
+def get_arrivals_by_time():
     db_connection = create_db_connection()
 
     db_name = db_connection.getDbName()
@@ -27,12 +27,12 @@ def getPodezd():
             cursor.close()
             connection.close()
         except Exception as error:
-            print('Error occurred trying to save humans count go outside - ', error)
+            print('Error occurred trying to get arrival - ', error)
 
     return result
 
 
-def getTimeAndPeople():
+def get_humans_count_by_time():
     db_connection = create_db_connection()
 
     db_name = db_connection.getDbName()
@@ -56,7 +56,7 @@ def getTimeAndPeople():
             cursor.close()
             connection.close()
         except Exception as error:
-            print('Error occurred trying to save humans count go outside - ', error)
+            print('Error occurred trying to get time and humans amount - ', error)
 
     return result
 
@@ -102,7 +102,7 @@ def load_human_go_inside(stop_id, time, coord_x1, coord_y1, coord_x4, coord_y4):
         print('Error occurred trying to connect to database - ', error)
     else:
         try:
-            sql = "INSERT INTO people (stop_id, coord_x1, coord_y1, coord_x4, coord_y4, time, flag) VALUES (" +\
+            sql = "INSERT INTO humans (stop_id, coord_x1, coord_y1, coord_x4, coord_y4, time, flag) VALUES (" +\
                   str(stop_id) + "," + str(coord_x1) + "," + str(coord_y1) + "," + str(coord_x4) + "," + \
                   str(coord_y4) + "," + "'" + str(time) + "'" + "," + str(1) + ")"
 
