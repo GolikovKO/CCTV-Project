@@ -3,7 +3,14 @@ import math
 import matplotlib.pyplot as plt
 
 from matplotlib import dates
-from db_functions import get_humans_count_by_time, get_arrivals_by_time
+from code.database.db_functions import get_humans_count_by_time, get_arrivals_by_time
+
+
+def convert_seconds(seconds):
+    hours = int(seconds // 3600)
+    minutes = int((seconds % 3600) // 60)
+    hours_minutes = str(hours) + ':' + str(minutes)
+    return hours_minutes
 
 
 def get_hours_minutes_humans_count(flag, sql_data):
@@ -13,18 +20,14 @@ def get_hours_minutes_humans_count(flag, sql_data):
         for row in sql_data:
             x_axis_humans_count.append(row[1])
             seconds = row[0].total_seconds()
-            hours = int(seconds // 3600)
-            minutes = int((seconds % 3600) // 60)
-            hours_minutes = str(hours) + ':' + str(minutes)
+            hours_minutes = convert_seconds(seconds)
             y_axis_humans_time.append(hours_minutes)
         return x_axis_humans_count, y_axis_humans_time
     else:
         vehicle_arrival_time = []
         for row in sql_data:
             seconds = row[2].total_seconds()
-            hours = int(seconds // 3600)
-            minutes = int((seconds % 3600) // 60)
-            hours_minutes = str(hours) + ':' + str(minutes)
+            hours_minutes = convert_seconds(seconds)
             vehicle_arrival_time.append(hours_minutes)
         return vehicle_arrival_time
 

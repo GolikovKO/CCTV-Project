@@ -1,6 +1,6 @@
 def get_db_settings():
     settings = []
-    with open('settings.txt') as file:
+    with open('../../settings.txt') as file:
         for line in file:
             settings.append(line.strip())
     return settings

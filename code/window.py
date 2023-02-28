@@ -20,7 +20,7 @@ environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = QLibraryInfo.location(
 # from DbService import DbService
 #from boxes_coords import BoxesCoords
 #from human_stop_status_check import StopCheck
-from StopCoords import StopCoords
+from stop_coords import StopCoords
 from worker_thread import WorkerThread
 import numpy
 import math
@@ -81,7 +81,7 @@ class MainWindow(QMainWindow):
         video_capture = cv2.VideoCapture(video_path)  # Передаём путь к видео к библиотеке cv2 для вырезки первого кадра
         success, image = video_capture.read()  # Считываем первый кадр видео
 
-        first_frame_path = './source/video_data/first_video_frame/frame.png'  # Путь для сохранения первого кадра
+        first_frame_path = '../source/video_data/first_video_frame/frame.png'  # Путь для сохранения первого кадра
         cv2.imwrite(first_frame_path, image)  # Сохраняем вырезанное изображение
 
         pygame.display.init()  # Инициализируем доступ к дисплею монитора
@@ -110,7 +110,7 @@ class MainWindow(QMainWindow):
                           10)  # отрисовываем на картинке границы, нажатые мышкой
         pygame.display.flip()  # Обновляем дисплей монитора
 
-        stop_image_path = './source/video_data/stop_area_frame/stop_area.png'  # Путь для сохранения кадра с остановкой
+        stop_image_path = '../source/video_data/stop_area_frame/stop_area.png'  # Путь для сохранения кадра с остановкой
 
         pygame.image.save(screen, stop_image_path)  # Сохраняем картинку с границами
         pygame.display.quit()  # Выключаем доступ к дисплею монитора

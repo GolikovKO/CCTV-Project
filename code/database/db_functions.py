@@ -1,6 +1,6 @@
 import psycopg2
 
-from db_connection_settings import DatabaseConnectionSettings, create_db_connection
+from db_connection_settings import create_db_connection
 
 
 def get_arrivals_by_time():

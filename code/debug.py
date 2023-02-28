@@ -1,7 +1,7 @@
 import datetime
-
-from db_connection_settings import create_db_connection
 import psycopg2
+
+from code.database.db_connection_settings import create_db_connection
 
 
 def load_humans_count_go_outside(db_connection, stop_id, time, x1, y1, x4, y4):
