@@ -6,10 +6,10 @@ from db_connection_settings import create_db_connection
 def get_arrivals_by_time():
     db_connection = create_db_connection()
 
-    db_name = db_connection.getDbName()
-    db_user = db_connection.getDbUser()
-    db_pass = db_connection.getDbPass()
-    db_host = db_connection.getDbHost()
+    db_name = db_connection.get_db_name()
+    db_user = db_connection.get_db_user()
+    db_pass = db_connection.get_db_pass()
+    db_host = db_connection.get_db_host()
 
     result = None
     try:
@@ -35,10 +35,10 @@ def get_arrivals_by_time():
 def get_humans_count_by_time():
     db_connection = create_db_connection()
 
-    db_name = db_connection.getDbName()
-    db_user = db_connection.getDbUser()
-    db_pass = db_connection.getDbPass()
-    db_host = db_connection.getDbHost()
+    db_name = db_connection.get_db_name()
+    db_user = db_connection.get_db_user()
+    db_pass = db_connection.get_db_pass()
+    db_host = db_connection.get_db_host()
 
     result = None
     try:
@@ -64,10 +64,10 @@ def get_humans_count_by_time():
 def load_human_go_outside(stop_id, time, coord_x1, coord_y1, coord_x4, coord_y4):
     db_connection = create_db_connection()
 
-    db_name = db_connection.getDbName()
-    db_user = db_connection.getDbUser()
-    db_pass = db_connection.getDbPass()
-    db_host = db_connection.getDbHost()
+    db_name = db_connection.get_db_name()
+    db_user = db_connection.get_db_user()
+    db_pass = db_connection.get_db_pass()
+    db_host = db_connection.get_db_host()
 
     try:
         connection = psycopg2.connect(dbname=db_name, user=db_user, password=db_pass, host=db_host)
@@ -91,10 +91,10 @@ def load_human_go_outside(stop_id, time, coord_x1, coord_y1, coord_x4, coord_y4)
 def load_human_go_inside(stop_id, time, coord_x1, coord_y1, coord_x4, coord_y4):
     db_connection = create_db_connection()
 
-    db_name = db_connection.getDbName()
-    db_user = db_connection.getDbUser()
-    db_pass = db_connection.getDbPass()
-    db_host = db_connection.getDbHost()
+    db_name = db_connection.get_db_name()
+    db_user = db_connection.get_db_user()
+    db_pass = db_connection.get_db_pass()
+    db_host = db_connection.get_db_host()
 
     try:
         connection = psycopg2.connect(dbname=db_name, user=db_user, password=db_pass, host=db_host)

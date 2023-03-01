@@ -5,10 +5,10 @@ from code.database.db_connection_settings import create_db_connection
 
 
 def load_humans_count_go_outside(db_connection, stop_id, time, x1, y1, x4, y4):
-    db_name = db_connection.getDbName()
-    db_user = db_connection.getDbUser()
-    db_pass = db_connection.getDbPass()
-    db_host = db_connection.getDbHost()
+    db_name = db_connection.get_db_name()
+    db_user = db_connection.get_db_user()
+    db_pass = db_connection.get_db_pass()
+    db_host = db_connection.get_db_host()
     print(db_name)
 
     try:

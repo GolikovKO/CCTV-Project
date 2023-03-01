@@ -16,40 +16,41 @@ def create_db_connection():
 
     db_connection = DatabaseConnectionSettings()
 
-    db_connection.setDbName(db_name)
-    db_connection.setDbUser(db_user)
-    db_connection.setDbPass(db_pass)
-    db_connection.setDbHost(db_host)
+    db_connection.set_db_name(db_name)
+    db_connection.set_db_user(db_user)
+    db_connection.set_db_pass(db_pass)
+    db_connection.set_db_host(db_host)
 
     return db_connection
 
 
 class DatabaseConnectionSettings:
-    __db_name = ''
-    __db_user = ''
-    __db_pass = ''
-    __db_host = ''
+    def __init__(self):
+        self._db_name = None
+        self._db_user = None
+        self._db_pass = None
+        self._db_host = None
 
-    def setDbHost(self, dbHost):
-        DatabaseConnectionSettings.__db_host = dbHost
+    def set_db_name(self, db_name):
+        self._db_name = db_name
 
-    def setDbUser(self, dbUser):
-        DatabaseConnectionSettings.__db_user = dbUser
+    def set_db_user(self, db_user):
+        self._db_user = db_user
 
-    def setDbPass(self, dbPass):
-        DatabaseConnectionSettings.__db_pass = dbPass
+    def set_db_pass(self, db_pass):
+        self._db_pass = db_pass
 
-    def setDbName(self, dbName):
-        DatabaseConnectionSettings.__db_name = dbName
+    def set_db_host(self, db_host):
+        self._db_host = db_host
 
-    def getDbHost(self):
-        return DatabaseConnectionSettings.__db_host
+    def get_db_host(self):
+        return self._db_host
 
-    def getDbUser(self):
-        return DatabaseConnectionSettings.__db_user
+    def get_db_user(self):
+        return self._db_user
 
-    def getDbPass(self):
-        return DatabaseConnectionSettings.__db_pass
+    def get_db_pass(self):
+        return self._db_pass
 
-    def getDbName(self):
-        return DatabaseConnectionSettings.__db_name
+    def get_db_name(self):
+        return self._db_name
