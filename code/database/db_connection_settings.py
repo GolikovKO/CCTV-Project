@@ -1,18 +1,21 @@
+import json
+
+
 def get_db_settings():
-    settings = []
-    with open('../../settings.txt') as file:
-        for line in file:
-            settings.append(line.strip())
-    return settings
+    file_with_settings = open('../settings.json')
+    settings_as_json = json.load(file_with_settings)
+    file_with_settings.close()
+
+    return settings_as_json
 
 
 def create_db_connection():
     settings = get_db_settings()
 
-    db_name = settings[0]
-    db_user = settings[1]
-    db_pass = settings[2]
-    db_host = settings[3]
+    db_name = settings.get("db_name")
+    db_user = settings.get("db_user")
+    db_pass = settings.get("db_pass")
+    db_host = settings.get("db_host")
 
     db_connection = DatabaseConnectionSettings()
 
