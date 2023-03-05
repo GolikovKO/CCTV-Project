@@ -1,4 +1,4 @@
-class StopCoords():
+class StopCoords:
 
     __x1 = 0
     __y1 = 0

@@ -1,5 +1,5 @@
 #from DbService import DbService
-from StopCoords import StopCoords
+from stop_coords import StopCoords
 
 
 def load_boxes_coords(x1, y1, x4, y4, human_id, boxes_coords):  # Записываем координаты каждого найденного человека

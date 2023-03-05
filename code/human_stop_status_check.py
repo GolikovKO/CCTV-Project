@@ -1,6 +1,6 @@
 from save_cropped_human_image import save_people_get_in_image, save_people_get_off_image
 #from DbService import DbService
-from StopCoords import StopCoords
+from stop_coords import StopCoords
 
 
 def check_human_position(current_points, tracking_people, human_id, returned_frame, stop_id, frame_number,

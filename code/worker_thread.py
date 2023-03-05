@@ -4,7 +4,7 @@ import math
 from PyQt5.QtCore import QThread, pyqtSignal
 from imageai.Detection import VideoObjectDetection
 
-from StopCoords import StopCoords
+from stop_coords import StopCoords
 from boxes_coords import locating_inside_stop, load_boxes_coords
 from human_stop_status_check import check_human_position
 
@@ -156,7 +156,7 @@ class WorkerThread(QThread):
         video = detector.detectObjectsFromVideo(  # Остальные настройки поиска, типа кадров в секунду, выводить логи в консоль и т.д.
             custom_objects=custom,
             input_file_path=os.path.join('D:/Dev/PyCharmProjects/CCTV-Project/source/video/cropped.mp4'), #('/home/kostya/PycharmProjects/CCTV/video/videos/cropped.mp4'),  # video_path),
-            output_file_path=os.path.join(output_path, 'video'),
+            output_file_path=os.path.join(output_path, '../video'),
             frames_per_second=30,
             display_box=True,
             display_percentage_probability=False,

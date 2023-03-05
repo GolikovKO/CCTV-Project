@@ -1,4 +1,0 @@
-CCTV-Database
-dev
-dev
-localhost
