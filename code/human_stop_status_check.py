@@ -1,4 +1,4 @@
-from save_cropped_human_image import save_people_get_in_image, save_people_get_off_image
+from save_cropped_human_image import save_cropped_human_image
 #from DbService import DbService
 from stop_coords import StopCoords
 
@@ -43,7 +43,7 @@ def check_human_position(current_points, tracking_people, human_id, returned_fra
             tracking_people[human_id][1] <= stop_сoord.getY3() and tracking_people[human_id][1] <= stop_сoord.getY4()))) == True)):
             humans_count += 1
             humans_get_off_total_count += humans_count
-            save_people_get_off_image(returned_frame, current_points, humans_get_off_total_count)
+            save_cropped_human_image(returned_frame, current_points, humans_get_off_total_count)
             time = int(frame_number / 30)
 
             x1 = current_points[0] - 60
@@ -91,7 +91,7 @@ def check_human_position(current_points, tracking_people, human_id, returned_fra
               tracking_people[human_id][1] <= stop_сoord.getY3() and tracking_people[human_id][1] <= stop_сoord.getY4()))) == False)):
             humans_count += 1
             humans_get_in_total_count += humans_count
-            save_people_get_in_image(returned_frame, current_points, humans_get_in_total_count)
+            save_cropped_human_image(returned_frame, current_points, humans_get_in_total_count)
             time = int(frame_number / 30)
 
             x1 = current_points[0] - 60

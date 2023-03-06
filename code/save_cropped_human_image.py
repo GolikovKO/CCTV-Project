@@ -1,13 +1,6 @@
 import cv2
 
 
-def save_people_get_off_image(frame, points, people):
-
-    ret = frame[points[1]-130:points[1]+130, points[0]-60:points[0]+60]
-    cv2.imwrite('./video_data/people_left/%d.png' % people, ret)
-
-
-def save_people_get_in_image(frame, points, people):
-
-    ret = frame[points[1]-130:points[1]+130, points[0]-60:points[0]+60]
-    cv2.imwrite('./video_data/people_in/%d.png' % people, ret)
+def save_cropped_human_image(frame, center_points, human_number):
+    cropped_frame = frame[center_points[1] - 130:center_points[1] + 130, center_points[0] - 60:center_points[0] + 60]
+    cv2.imwrite('./video_data/people_in/%d.png' % human_number, cropped_frame)
