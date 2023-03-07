@@ -1,6 +1,5 @@
 from code.database.db_connection_settings import create_db_connection
 
-
 # Collect events until released
 def main():
     db_connection = create_db_connection()
