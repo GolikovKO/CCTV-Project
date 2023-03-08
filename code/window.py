@@ -51,7 +51,8 @@ label_off3_img = False
 class MainWindow(QMainWindow):
 
     def __init__(self):  # При инициализации происходит следующее:
-        super().__init__()  # Инициализируем вызов родительского конструктора QMainWindow, или можно указать класс родителя напрямую
+        super().__init__()  # Инициализируем вызов родительского конструктора QMainWindow,
+        # или можно указать класс родителя напрямую
         #  QMainWindow.__init__(self)
         uic.loadUi('./interface/interface.ui', self)  # Загружаем файл с интерфейсом
         self.worker = WorkerThread()  # Инициализируем поток по конкретному классу
@@ -77,7 +78,8 @@ class MainWindow(QMainWindow):
         stop_id = int(self.stops_combo_box.currentText())  # Получаем номер выбранной остановки из комбо-бокса
         self.stops_combo_box.setEnabled(False)  # Выключаем комбо-бокс с номерами остановки после выбора видеозаписи
 
-        video_path, _filters = QtWidgets.QFileDialog.getOpenFileName(None, 'Выберите видео')  # Вызов проводника для выбора видео TODO: Video path not working in other thread
+        # Вызов проводника для выбора видео TODO: Video path not working in other thread
+        video_path, _filters = QtWidgets.QFileDialog.getOpenFileName(None, 'Выберите видео')
         video_capture = cv2.VideoCapture(video_path)  # Передаём путь к видео к библиотеке cv2 для вырезки первого кадра
         success, image = video_capture.read()  # Считываем первый кадр видео
 
@@ -90,8 +92,8 @@ class MainWindow(QMainWindow):
                                          pygame.FULLSCREEN)  # Настраиваем отображение первого кадра видео для правильной ориентации координат
         screen.blit(img, (0, 0))  # Помещаем первый кадр видео на дисплей монитора с координатами верхнего левого угла
         pygame.display.flip()  # Обновляем дисплей монитора
-
-        for i in range(4):  # Нужно получить границы остановки нажатием мыши, ставим слушатель на нажатие мышии добавляем координаты в список
+        # Нужно получить границы остановки нажатием мыши,ставим слушатель на нажатие мышии добавляем координаты в список
+        for i in range(4):
             with mouse.Listener(on_click=on_click) as listener:
                 listener.join()
 
@@ -126,7 +128,8 @@ class MainWindow(QMainWindow):
         # Необходим второй поток для вычислений, чтобы интерфейс не зависал. Создаём его
         self.worker.start()  # Запускаем поток
 
-        # Подключаем к потоку сигналы, то есть настройка события, при котором нужно вернуть значение в основной поток и обновить интерфейс
+        # Подключаем к потоку сигналы, то есть настройка события,
+        # при котором нужно вернуть значение в основной поток и обновить интерфейс
         self.worker.update_frame_number.connect(self.evt_update_frame_number)
         self.worker.update_time.connect(self.evt_update_time)
         self.worker.update_getin_amount.connect(self.evt_update_people_getin_amount)
