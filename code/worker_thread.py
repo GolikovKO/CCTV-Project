@@ -51,7 +51,8 @@ class WorkerThread(QThread):
 
             #boxes = BoxesCoords()
 
-            x, y = len(people_boxes_array), 8  # Cоздаём двумерный список, в котором количество элементов зависит от количества обнаруженных людей на этом кадре,
+            x, y = len(people_boxes_array), 8  # Создаём двумерный список, в котором количество элементов зависит от
+            # количества обнаруженных людей на этом кадре,
             # и у каждого человека 8 координат - края ограничивающего прямоугольника
             boxes_coords = [[0 for j in range(y)] for i in range(x)]
 
@@ -100,20 +101,20 @@ class WorkerThread(QThread):
                             params = check_human_position(current_points, tracking_human_copy, human_id,
                                                           returned_frame, stop_id, frame_number,
                                                           humans_get_in_total_count, humans_get_off_total_count)
-                            if params == 2:
+                            if params == 0:
                                 pass
-                            elif params[1] == 0:
+                            elif params[1] == 1:
                                 humans_get_in_total_count += params[0]
                                 self.update_getin_labels.emit(params[2], params[3])
-                            elif params[1] == 1:
+                            elif params[1] == -1:
                                 humans_get_off_total_count += params[0]
                                 self.update_getoff_labels.emit(params[2], params[3])
                             if current_points in center_box_points_current_frame:  # Удаляем этого же самого человека из списка точек текущего кадра
                                 center_box_points_current_frame.remove(current_points)
                     if not human_exists:  # Если этого человека не существует
                         tracked_humans.pop(human_id)  # то убираем его из списка
-                for pt in center_box_points_current_frame:  # Обновляем словарь на людей с этого кадра
-                    tracked_humans[human_count] = pt
+                for points in center_box_points_current_frame:  # Обновляем словарь на людей с этого кадра
+                    tracked_humans[human_count] = points
                     human_count += 1
 
             center_box_points_previous_frame = center_box_points_current_frame.copy()  # Копируем центральные точки текущего кадра в массив точек прошлого кадра
