@@ -1,29 +1,29 @@
 from save_cropped_human_image import save_cropped_human_image
-from stop_coords import StopCoords
+from stop_coords import StopPointsCoords
 from code.database.db_functions import load_human
 
 
-def inside_check(points):
-    stop_сoords = StopCoords()
-    if (((points[0] <= stop_сoords.getX1() and points[0] <= stop_сoords.getX2() and
-          points[0] <= stop_сoords.getX3() and points[0] >= stop_сoords.getX4() and
-          points[1] >= stop_сoords.getY1() and points[1] >= stop_сoords.getY2() and
-          points[1] <= stop_сoords.getY3() and points[1] <= stop_сoords.getY4())
+def inside_check(current_points):
+    stop_points = StopPointsCoords()
+    if (((current_points[0] <= stop_points.getX1() and current_points[0] <= stop_points.getX2() and
+          current_points[0] <= stop_points.getX3() and current_points[0] >= stop_points.getX4() and
+          current_points[1] >= stop_points.getY1() and current_points[1] >= stop_points.getY2() and
+          current_points[1] <= stop_points.getY3() and current_points[1] <= stop_points.getY4())
          or
-         (points[0] >= stop_сoords.getX1() and points[0] <= stop_сoords.getX2() and
-          points[0] >= stop_сoords.getX3() and points[0] >= stop_сoords.getX4() and
-          points[1] >= stop_сoords.getY1() and points[1] >= stop_сoords.getY2() and
-          points[1] <= stop_сoords.getY3() and points[1] <= stop_сoords.getY4())
+         (current_points[0] >= stop_points.getX1() and current_points[0] <= stop_points.getX2() and
+          current_points[0] >= stop_points.getX3() and current_points[0] >= stop_points.getX4() and
+          current_points[1] >= stop_points.getY1() and current_points[1] >= stop_points.getY2() and
+          current_points[1] <= stop_points.getY3() and current_points[1] <= stop_points.getY4())
          or
-         (points[0] >= stop_сoords.getX1() and points[0] <= stop_сoords.getX2() and
-          points[0] >= stop_сoords.getX3() and points[0] <= stop_сoords.getX4() and
-          points[1] >= stop_сoords.getY1() and points[1] >= stop_сoords.getY2() and
-          points[1] <= stop_сoords.getY3() and points[1] <= stop_сoords.getY4())
+         (current_points[0] >= stop_points.getX1() and current_points[0] <= stop_points.getX2() and
+          current_points[0] >= stop_points.getX3() and current_points[0] <= stop_points.getX4() and
+          current_points[1] >= stop_points.getY1() and current_points[1] >= stop_points.getY2() and
+          current_points[1] <= stop_points.getY3() and current_points[1] <= stop_points.getY4())
          or
-         (points[0] >= stop_сoords.getX1() and points[0] <= stop_сoords.getX2() and
-          points[0] <= stop_сoords.getX3() and points[0] >= stop_сoords.getX4() and
-          points[1] >= stop_сoords.getY1() and points[1] >= stop_сoords.getY2() and
-          points[1] <= stop_сoords.getY3() and points[1] <= stop_сoords.getY4()))) is False:
+         (current_points[0] >= stop_points.getX1() and current_points[0] <= stop_points.getX2() and
+          current_points[0] <= stop_points.getX3() and current_points[0] >= stop_points.getX4() and
+          current_points[1] >= stop_points.getY1() and current_points[1] >= stop_points.getY2() and
+          current_points[1] <= stop_points.getY3() and current_points[1] <= stop_points.getY4()))) is False:
         return False
     else:
         return True

@@ -20,7 +20,7 @@ environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = QLibraryInfo.location(
 # from DbService import DbService
 #from boxes_coords import BoxesCoords
 #from human_stop_status_check import StopCheck
-from stop_coords import StopCoords
+from stop_coords import StopPointsCoords
 from worker_thread import WorkerThread
 import numpy
 import math
@@ -35,7 +35,7 @@ human_count = 0
 humans_inside_total_count = 0
 humans_get_off_total_count = 0
 humans_get_in_total_count = 0
-stopCoord = StopCoords()
+stopCoord = StopPointsCoords()
 # video_path = ''
 stop_id = 0
 

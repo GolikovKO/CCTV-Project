@@ -4,9 +4,10 @@ import math
 from PyQt5.QtCore import QThread, pyqtSignal
 from imageai.Detection import VideoObjectDetection
 
-from stop_coords import StopCoords
+from stop_coords import StopPointsCoords
 from boxes_coords import locating_inside_stop, load_boxes_coords
 from human_stop_status_check import check_human_position
+from build_graph import build_graph
 
 center_box_points_previous_frame = []
 tracked_humans = {}
@@ -14,7 +15,7 @@ human_count = 0
 humans_inside_total_count = 0
 humans_get_off_total_count = 0
 humans_get_in_total_count = 0
-stopCoord = StopCoords()
+stopCoord = StopPointsCoords()
 # video_path = ''
 stop_id = 0
 
@@ -129,10 +130,8 @@ class WorkerThread(QThread):
 
                 humans_inside_total_count += humans_in_second_count
 
-                # graph = BuildGraph()
-                # graph.buildGraph()
-
-                #self.update_graph.emit()
+                build_graph()
+                self.update_graph.emit()
 
             self.update_getin_amount.emit(humans_get_in_total_count)
             self.update_getoff_amount.emit(humans_get_off_total_count)
@@ -140,7 +139,7 @@ class WorkerThread(QThread):
             print("Number of humans leave bus stop - ", humans_get_off_total_count)
             print("Number of humans came to the bus stop - ", humans_get_in_total_count)
 
-        #  Настройка сети
+        # Настройка сети
         execution_path = os.getcwd()  # Записываем путь к папке проекта
 
         resnet_path = execution_path + '/resnet'  # Указываем путь к весам сети в папке проекта
@@ -153,8 +152,8 @@ class WorkerThread(QThread):
         detector.loadModel()  # Загружаем тип сети и веса, под капотом какие-то алгоритмы для взаимодействия
 
         custom = detector.CustomObjects(person=True)  # Указываем что нужно искать только людей
-
-        video = detector.detectObjectsFromVideo(  # Остальные настройки поиска, типа кадров в секунду, выводить логи в консоль и т.д.
+        # Остальные настройки поиска, типа кадров в секунду, выводить логи в консоль и т.д.
+        video = detector.detectObjectsFromVideo(
             custom_objects=custom,
             input_file_path=os.path.join('D:/Dev/PyCharmProjects/CCTV-Project/source/video/cropped.mp4'), #('/home/kostya/PycharmProjects/CCTV/video/videos/cropped.mp4'),  # video_path),
             output_file_path=os.path.join(output_path, '../video'),
