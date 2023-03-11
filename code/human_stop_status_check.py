@@ -3,6 +3,13 @@ from stop_coords import StopPointsCoords
 from code.database.db_functions import load_human
 
 
+def load_human_to_dict(human_flag, human_count, frame, points):
+    return {'human_flag': human_flag,
+            'human_count': human_count,
+            'frame': frame,
+            'points': points}
+
+
 def inside_check(current_points):
     stop_points = StopPointsCoords()
     if (((current_points[0] <= stop_points.getX1() and current_points[0] <= stop_points.getX2() and
@@ -53,7 +60,7 @@ def check_human_position(current_points, tracked_humans, human_id, returned_fram
         handle_human(human_get_off_flag, returned_frame, current_points,
                      humans_get_off_total_count, frame_number, stop_id)
 
-        return humans_get_off_total_count, human_get_off_flag, returned_frame, current_points
+        return load_human_to_dict(human_get_off_flag, humans_get_off_total_count, returned_frame, current_points)
     # Если текущие координаты внутри, а прошлые снаружи, значит человек вошёл на остановку
     elif (current_frame_human_points is True) and (previous_frame_human_points is False):
         human_get_in_flag = 1
@@ -62,8 +69,8 @@ def check_human_position(current_points, tracked_humans, human_id, returned_fram
         handle_human(human_get_in_flag, returned_frame, current_points,
                      humans_get_in_total_count, frame_number, stop_id)
 
-        return humans_get_in_total_count, human_get_in_flag, returned_frame, current_points
+        return load_human_to_dict(human_get_in_flag, humans_get_in_total_count, returned_frame, current_points)
     # Если изменений нет, люди не выходили и не входили, то возвращаем два
     else:
         human_not_moved_flag = 0
-        return human_not_moved_flag
+        return load_human_to_dict(human_not_moved_flag, None, None, None)

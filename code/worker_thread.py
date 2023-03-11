@@ -99,17 +99,20 @@ class WorkerThread(QThread):
                             # Когда определили,что это тот же самый человек, можно проверить вышел он с остановки или вошёл, или остался на том же месте
 
                             # Отправляем всё необходимое для определения в функцию
-                            params = check_human_position(current_points, tracking_human_copy, human_id,
-                                                          returned_frame, stop_id, frame_number,
-                                                          humans_get_in_total_count, humans_get_off_total_count)
-                            if params == 0:
+                            human_params = check_human_position(current_points, tracking_human_copy, human_id,
+                                                                returned_frame, stop_id, frame_number,
+                                                                humans_get_in_total_count, humans_get_off_total_count)
+                            human_flag = human_params.get("human_flag")
+                            if human_flag == 0:
                                 pass
-                            elif params[1] == 1:
-                                humans_get_in_total_count += params[0]
-                                self.update_getin_labels.emit(params[2], params[3])
-                            elif params[1] == -1:
-                                humans_get_off_total_count += params[0]
-                                self.update_getoff_labels.emit(params[2], params[3])
+                            elif human_flag == 1:
+                                humans_get_in_total_count += human_params.get("human_count")
+                                self.update_getin_labels.emit(human_params.get("frame"),
+                                                              human_params.get("points"))
+                            elif human_flag == -1:
+                                humans_get_off_total_count += human_params.get("human_count")
+                                self.update_getoff_labels.emit(human_params.get("frame"),
+                                                               human_params.get("points"))
                             if current_points in center_box_points_current_frame:  # Удаляем этого же самого человека из списка точек текущего кадра
                                 center_box_points_current_frame.remove(current_points)
                     if not human_exists:  # Если этого человека не существует
@@ -155,7 +158,7 @@ class WorkerThread(QThread):
         # Остальные настройки поиска, типа кадров в секунду, выводить логи в консоль и т.д.
         video = detector.detectObjectsFromVideo(
             custom_objects=custom,
-            input_file_path=os.path.join('D:/Dev/PyCharmProjects/CCTV-Project/source/video/cropped.mp4'), #('/home/kostya/PycharmProjects/CCTV/video/videos/cropped.mp4'),  # video_path),
+            input_file_path=os.path.join('I:/Dev/PyCharmProjects/CCTV-Project/source/video/cropped.mp4'), #('/home/kostya/PycharmProjects/CCTV/video/videos/cropped.mp4'),  # video_path),
             output_file_path=os.path.join(output_path, '../video'),
             frames_per_second=30,
             display_box=True,
