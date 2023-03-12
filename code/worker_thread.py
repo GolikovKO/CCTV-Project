@@ -4,7 +4,7 @@ import math
 from PyQt5.QtCore import QThread, pyqtSignal
 from imageai.Detection import VideoObjectDetection
 
-from stop_coords import StopPointsCoords
+from stop_coords_points import StopPointsCoords
 from boxes_coords import locating_inside_stop, load_boxes_coords
 from human_stop_status_check import check_human_position
 from build_graph import build_graph

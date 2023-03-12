@@ -1,5 +1,5 @@
 from save_cropped_human_image import save_cropped_human_image
-from stop_coords import StopPointsCoords
+from stop_coords_points import Point
 from code.database.db_functions import load_human
 
 
