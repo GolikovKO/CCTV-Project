@@ -4,9 +4,10 @@ import math
 from PyQt5.QtCore import QThread, pyqtSignal
 from imageai.Detection import VideoObjectDetection
 
-from stop_coords import StopCoords
+from stop_coords_points import StopPointsCoords
 from boxes_coords import locating_inside_stop, load_boxes_coords
 from human_stop_status_check import check_human_position
+from build_graph import build_graph
 
 center_box_points_previous_frame = []
 tracked_humans = {}
@@ -14,7 +15,7 @@ human_count = 0
 humans_inside_total_count = 0
 humans_get_off_total_count = 0
 humans_get_in_total_count = 0
-stopCoord = StopCoords()
+stopCoord = StopPointsCoords()
 # video_path = ''
 stop_id = 0
 
@@ -51,7 +52,8 @@ class WorkerThread(QThread):
 
             #boxes = BoxesCoords()
 
-            x, y = len(people_boxes_array), 8  # Cоздаём двумерный список, в котором количество элементов зависит от количества обнаруженных людей на этом кадре,
+            x, y = len(people_boxes_array), 8  # Создаём двумерный список, в котором количество элементов зависит от
+            # количества обнаруженных людей на этом кадре,
             # и у каждого человека 8 координат - края ограничивающего прямоугольника
             boxes_coords = [[0 for j in range(y)] for i in range(x)]
 
@@ -97,23 +99,26 @@ class WorkerThread(QThread):
                             # Когда определили,что это тот же самый человек, можно проверить вышел он с остановки или вошёл, или остался на том же месте
 
                             # Отправляем всё необходимое для определения в функцию
-                            params = check_human_position(current_points, tracking_human_copy, human_id,
-                                                          returned_frame, stop_id, frame_number,
-                                                          humans_get_in_total_count, humans_get_off_total_count)
-                            if params == 2:
+                            human_params = check_human_position(current_points, tracking_human_copy, human_id,
+                                                                returned_frame, stop_id, frame_number,
+                                                                humans_get_in_total_count, humans_get_off_total_count)
+                            human_flag = human_params.get("human_flag")
+                            if human_flag == 0:
                                 pass
-                            elif params[1] == 0:
-                                humans_get_in_total_count += params[0]
-                                self.update_getin_labels.emit(params[2], params[3])
-                            elif params[1] == 1:
-                                humans_get_off_total_count += params[0]
-                                self.update_getoff_labels.emit(params[2], params[3])
+                            elif human_flag == 1:
+                                humans_get_in_total_count += human_params.get("human_count")
+                                self.update_getin_labels.emit(human_params.get("frame"),
+                                                              human_params.get("points"))
+                            elif human_flag == -1:
+                                humans_get_off_total_count += human_params.get("human_count")
+                                self.update_getoff_labels.emit(human_params.get("frame"),
+                                                               human_params.get("points"))
                             if current_points in center_box_points_current_frame:  # Удаляем этого же самого человека из списка точек текущего кадра
                                 center_box_points_current_frame.remove(current_points)
                     if not human_exists:  # Если этого человека не существует
                         tracked_humans.pop(human_id)  # то убираем его из списка
-                for pt in center_box_points_current_frame:  # Обновляем словарь на людей с этого кадра
-                    tracked_humans[human_count] = pt
+                for points in center_box_points_current_frame:  # Обновляем словарь на людей с этого кадра
+                    tracked_humans[human_count] = points
                     human_count += 1
 
             center_box_points_previous_frame = center_box_points_current_frame.copy()  # Копируем центральные точки текущего кадра в массив точек прошлого кадра
@@ -128,10 +133,8 @@ class WorkerThread(QThread):
 
                 humans_inside_total_count += humans_in_second_count
 
-                # graph = BuildGraph()
-                # graph.buildGraph()
-
-                #self.update_graph.emit()
+                build_graph()
+                self.update_graph.emit()
 
             self.update_getin_amount.emit(humans_get_in_total_count)
             self.update_getoff_amount.emit(humans_get_off_total_count)
@@ -139,7 +142,7 @@ class WorkerThread(QThread):
             print("Number of humans leave bus stop - ", humans_get_off_total_count)
             print("Number of humans came to the bus stop - ", humans_get_in_total_count)
 
-        #  Настройка сети
+        # Настройка сети
         execution_path = os.getcwd()  # Записываем путь к папке проекта
 
         resnet_path = execution_path + '/resnet'  # Указываем путь к весам сети в папке проекта
@@ -152,10 +155,10 @@ class WorkerThread(QThread):
         detector.loadModel()  # Загружаем тип сети и веса, под капотом какие-то алгоритмы для взаимодействия
 
         custom = detector.CustomObjects(person=True)  # Указываем что нужно искать только людей
-
-        video = detector.detectObjectsFromVideo(  # Остальные настройки поиска, типа кадров в секунду, выводить логи в консоль и т.д.
+        # Остальные настройки поиска, типа кадров в секунду, выводить логи в консоль и т.д.
+        video = detector.detectObjectsFromVideo(
             custom_objects=custom,
-            input_file_path=os.path.join('D:/Dev/PyCharmProjects/CCTV-Project/source/video/cropped.mp4'), #('/home/kostya/PycharmProjects/CCTV/video/videos/cropped.mp4'),  # video_path),
+            input_file_path=os.path.join('I:/Dev/PyCharmProjects/CCTV-Project/source/video/cropped.mp4'), #('/home/kostya/PycharmProjects/CCTV/video/videos/cropped.mp4'),  # video_path),
             output_file_path=os.path.join(output_path, '../video'),
             frames_per_second=30,
             display_box=True,
