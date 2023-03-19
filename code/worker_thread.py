@@ -9,15 +9,15 @@ from boxes_coords import locating_inside_stop, load_boxes_coords
 from human_stop_status_check import check_human_position
 from build_graph import build_graph
 
-center_box_points_previous_frame = []
-tracked_humans = {}
-human_count = 0
-humans_inside_total_count = 0
-humans_get_off_total_count = 0
-humans_get_in_total_count = 0
-stopCoord = StopPointsCoords()
+#center_box_points_previous_frame = []
+#tracked_humans = {}
+#human_count = 0
+#humans_inside_total_count = 0
+#humans_get_off_total_count = 0
+#humans_get_in_total_count = 0
+#stopCoord = StopPointsCoords()
 # video_path = ''
-stop_id = 0
+#stop_id = 0
 
 
 class WorkerThread(QThread):
@@ -30,6 +30,16 @@ class WorkerThread(QThread):
     update_getin_labels = pyqtSignal(object, object)
     update_getoff_labels = pyqtSignal(object, object)
 
+    human_count = 0
+    center_box_points_previous_frame = []
+    humans_get_off_total_count = 0
+    humans_get_in_total_count = 0
+    humans_inside_total_count = 0
+    tracked_humans = {}
+    stopCoord = StopPointsCoords()
+    video_path = ''
+    stop_id = 0
+
     def run(self):
 
         def for_frame(frame_number, output_array, output_count, returned_frame):
@@ -39,16 +49,6 @@ class WorkerThread(QThread):
             self.update_frame_number.emit(frame_number)
 
             center_box_points_current_frame = []
-
-            global human_count
-            global center_box_points_previous_frame
-            global humans_get_off_total_count
-            global humans_get_in_total_count
-            global humans_inside_total_count
-            global tracked_humans
-            global stopCoord
-            # global video_path
-            global stop_id
 
             #boxes = BoxesCoords()
 
@@ -74,15 +74,15 @@ class WorkerThread(QThread):
             # как координаты с текущего кадра и с прошлого кадра
             if frame_number <= 2:  # Если текущий кадр меньше или равен двум
                 for current_points in center_box_points_current_frame:  # Для точек на текущем кадре
-                    for previous_points in center_box_points_previous_frame:  # Для точек на предыдущем кадре
+                    for previous_points in WorkerThread.center_box_points_previous_frame:  # Для точек на предыдущем кадре
                         distance_between_points = math.hypot(previous_points[0] - current_points[0], previous_points[1]
                                                              - current_points[1])  # Высчитываем расстояние
                         if distance_between_points < 25:  # Если дистанция меньше этого значения
-                            tracked_humans[human_count] = current_points  # То мы говорим что это тот же самый человек
-                            human_count += 1  # Увеличиваем счётчик людей
+                            WorkerThread.tracked_humans[WorkerThread.human_count] = current_points  # То мы говорим что это тот же самый человек
+                            WorkerThread.human_count += 1  # Увеличиваем счётчик людей
             else:
                 purified_dict = {}  # Бывает так, что некоторые люди записываются в словарь двараза. Чтобы это исправить очищаем словарь от одинаковых значений
-                [purified_dict.update({k: v}) for k, v in tracked_humans.items() if v not in purified_dict.values()]
+                [purified_dict.update({k: v}) for k, v in WorkerThread.tracked_humans.items() if v not in purified_dict.values()]
                 tracked_humans = purified_dict
 
                 tracking_human_copy = tracked_humans.copy()  # Делаем копию словаря с координатами обнаруженных людей, как словарь обнаруженных людей с прошлых кадров
@@ -100,17 +100,17 @@ class WorkerThread(QThread):
 
                             # Отправляем всё необходимое для определения в функцию
                             human_params = check_human_position(current_points, tracking_human_copy, human_id,
-                                                                returned_frame, stop_id, frame_number,
-                                                                humans_get_in_total_count, humans_get_off_total_count)
+                                                                returned_frame, WorkerThread.stop_id, frame_number,
+                                                                WorkerThread.humans_get_in_total_count, WorkerThread.humans_get_off_total_count)
                             human_flag = human_params.get("human_flag")
                             if human_flag == 0:
                                 pass
                             elif human_flag == 1:
-                                humans_get_in_total_count += human_params.get("human_count")
+                                WorkerThread.humans_get_in_total_count += human_params.get("human_count")
                                 self.update_getin_labels.emit(human_params.get("frame"),
                                                               human_params.get("points"))
                             elif human_flag == -1:
-                                humans_get_off_total_count += human_params.get("human_count")
+                                WorkerThread.humans_get_off_total_count += human_params.get("human_count")
                                 self.update_getoff_labels.emit(human_params.get("frame"),
                                                                human_params.get("points"))
                             if current_points in center_box_points_current_frame:  # Удаляем этого же самого человека из списка точек текущего кадра
@@ -118,8 +118,8 @@ class WorkerThread(QThread):
                     if not human_exists:  # Если этого человека не существует
                         tracked_humans.pop(human_id)  # то убираем его из списка
                 for points in center_box_points_current_frame:  # Обновляем словарь на людей с этого кадра
-                    tracked_humans[human_count] = points
-                    human_count += 1
+                    tracked_humans[WorkerThread.human_count] = points
+                    WorkerThread.human_count += 1
 
             center_box_points_previous_frame = center_box_points_current_frame.copy()  # Копируем центральные точки текущего кадра в массив точек прошлого кадра
 
@@ -128,19 +128,19 @@ class WorkerThread(QThread):
 
                 self.update_time.emit(time)
 
-                humans_in_second_count = locating_inside_stop(stop_id, time, boxes_coords, stopCoord)
+                humans_in_second_count = locating_inside_stop(WorkerThread.stop_id, time, boxes_coords, WorkerThread.stopCoord)
                 print('Number of humans at the stop - ', humans_in_second_count)
 
-                humans_inside_total_count += humans_in_second_count
+                WorkerThread.humans_inside_total_count += humans_in_second_count
 
                 build_graph()
                 self.update_graph.emit()
 
-            self.update_getin_amount.emit(humans_get_in_total_count)
-            self.update_getoff_amount.emit(humans_get_off_total_count)
+            self.update_getin_amount.emit(WorkerThread.humans_get_in_total_count)
+            self.update_getoff_amount.emit(WorkerThread.humans_get_off_total_count)
 
-            print("Number of humans leave bus stop - ", humans_get_off_total_count)
-            print("Number of humans came to the bus stop - ", humans_get_in_total_count)
+            print("Number of humans leave bus stop - ", WorkerThread.humans_get_off_total_count)
+            print("Number of humans came to the bus stop - ", WorkerThread.humans_get_in_total_count)
 
         # Настройка сети
         execution_path = os.getcwd()  # Записываем путь к папке проекта
